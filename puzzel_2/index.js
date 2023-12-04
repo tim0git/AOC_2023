@@ -3,20 +3,13 @@ const fs = require('fs');
 const colours = ['red', 'blue', 'green'];
 const colourRegex = new RegExp(`(\\d+)\\s+(${colours.join('|')})`, 'g');
 
-const aggregateBallsUsedInEachRound =(allBallsMatchedInRound)=> {
-    const colouredBallAccumulator = {
-        red: 0,
-        blue: 0,
-        green: 0,
-    };
-
-    allBallsMatchedInRound.forEach(item => {
-        const match = item.match(/(\d+) (\w+)/);
-        const [, count, color] = match;
-        colouredBallAccumulator[color] = parseInt(count);
-    });
-    return colouredBallAccumulator;
-}
+const aggregateBallsUsedInEachRound = (allBallsMatchedInRound) => {
+    return allBallsMatchedInRound.reduce((accumulator, item) => {
+        const [, count, color] = item.match(/(\d+) (\w+)/);
+        accumulator[color] = (accumulator[color] || 0) + parseInt(count);
+        return accumulator;
+    }, { red: 0, blue: 0, green: 0 });
+};
 const parseGameNumber = (game) => {
     const gameNumberRegex = /Game (\d+)/;
     return parseInt(game.match(gameNumberRegex)[1])
